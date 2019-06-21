@@ -68,6 +68,6 @@ module.exports = {
 	getCdnManagerBuild: function(argv) {
 		return argv.cdnManagerBuild ||
 			process.env.npm_package_config_frauPublisher_appInventory_build ||
-			this.getVersion(); //cdn 'build' refers to the specific package version
+			this.getVersion(argv); //cdn 'build' refers to the specific package version
 	}
 };
