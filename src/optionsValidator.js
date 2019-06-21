@@ -69,6 +69,24 @@ module.exports = function(opts) {
 			};
 		},
 
+		getAppInventory: function() {
+			validateOpts(opts);
+			if (!opts.appInventory) {
+				console.log('getting out.'); //eslint-disable-line no-console
+				return null;
+			}
+			if (!opts.appInventory.token) {
+				throw new Error('Missing app inventory token');
+			}
+			if (!opts.appInventory.version) {
+				throw new Error('Missing app inventory version');
+			}
+			if (!opts.appInventory.build) {
+				throw new Error('Missing app inventory build');
+			}
+			return opts.appInventory;
+		},
+
 		getUploadPath: function() {
 			validateOpts(opts);
 			const devPath = getDevPath(opts);

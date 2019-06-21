@@ -95,6 +95,47 @@ describe('options validator', function() {
 
 	});
 
+	describe('app inventory', function() {
+		it('should throw with no app inventory github token', function() {
+			var appInventoryOptions = optionsValidator(
+				{
+					appInventory: {}
+				}
+			);
+			expect(function() {
+				appInventoryOptions.getAppInventory();
+			}).to.throw('Missing app inventory token');
+		});
+		it('should throw with no app inventory version', function() {
+			var appInventoryOptions = optionsValidator(
+				{
+					appInventory: { token: 'I_AM_A_TOKEN' }
+				}
+			);
+			expect(function() {
+				appInventoryOptions.getAppInventory();
+			}).to.throw('Missing app inventory version');
+		});
+		it('should throw with no app inventory build', function() {
+			var appInventoryOptions = optionsValidator(
+				{
+					appInventory: { token: 'I_AM_A_TOKEN', version: '28.0' }
+				}
+			);
+			expect(function() {
+				appInventoryOptions.getAppInventory();
+			}).to.throw('Missing app inventory build');
+		});
+		it('should return specified app inventory', function() {
+			var appInventoryOptions = optionsValidator(
+				{
+					appInventory: { token: 'I_AM_A_TOKEN', version: '28.0', build: '28.8.0' }
+				}
+			);
+			expect(appInventoryOptions.getAppInventory().token).to.equal('I_AM_A_TOKEN');
+		});
+	});
+
 	describe('creds', function() {
 
 		it('should throw with no credentials', function() {

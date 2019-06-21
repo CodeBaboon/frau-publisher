@@ -35,7 +35,8 @@ module.exports = {
 			files: this.getFiles(argv),
 			moduleType: this.getModuleType(argv),
 			targetDirectory: this.getTargetDirectory(argv),
-			version: this.getVersion(argv)
+			version: this.getVersion(argv),
+			appInventory: this.getAppInventory(argv)
 		};
 	},
 	getTargetDirectory: function(argv) {
@@ -47,5 +48,26 @@ module.exports = {
 			process.env[argv.versionvar] ||
 			process.env.npm_package_config_frauPublisher_version ||
 			process.env[process.env.npm_package_config_frauPublisher_versionVar];
+	},
+	getAppInventory: function(argv) {
+		return argv.appInventory ||
+			{
+				token: this.getCdnManagerToken(argv),
+				version: this.getCdnManagerVersion(argv),
+				build: this.getCdnManagerBuild(argv)
+			};
+	},
+	getCdnManagerToken: function(argv) {
+		return argv.cdnManagerToken ||
+			process.env.npm_package_config_frauPublisher_appInventory_token;
+	},
+	getCdnManagerVersion: function(argv) {
+		return argv.cdnManagerVersion ||
+			process.env.npm_package_config_frauPublisher_appInventory_version;
+	},
+	getCdnManagerBuild: function(argv) {
+		return argv.cdnManagerBuild ||
+			process.env.npm_package_config_frauPublisher_appInventory_build ||
+			this.getVersion(); //cdn 'build' refers to the specific package version
 	}
 };

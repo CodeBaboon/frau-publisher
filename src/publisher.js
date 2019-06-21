@@ -13,56 +13,64 @@ function helper(opts, initialPath) {
 
 	return {
 		getStream: function() {
-			const options = optionsValidator(opts);
-			const s3BaseOptions = {
-				headers: {
-					'cache-control': 'public,max-age=31536000,immutable',
-					'x-amz-acl': 'public-read'
-				},
-				uploadPath: options.getUploadPath()
-			};
+			return;
+			// const options = optionsValidator(opts);
+			// const s3BaseOptions = {
+			// 	headers: {
+			// 		'cache-control': 'public,max-age=31536000,immutable',
+			// 		'x-amz-acl': 'public-read'
+			// 	},
+			// 	uploadPath: options.getUploadPath()
+			// };
 
-			const compressionTransform = getCompressionTransform();
-			const otherTransform = getOtherTransform();
+			// const compressionTransform = getCompressionTransform();
+			// const otherTransform = getOtherTransform();
 
-			const overwriteCheck = overwrite(options);
-			return throughConcurrent.obj(/* @this */ function(file, _, cb) {
-				overwriteCheck().then(() => {
-					if (file.base[file.base.length - 1] === '/') {
-						file.base = file.base.substring(0, file.base.length - 1);
-					}
+			// const overwriteCheck = overwrite(options);
+			// return throughConcurrent.obj(/* @this */ function(file, _, cb) {
+			// 	overwriteCheck().then(() => {
+			// 		if (file.base[file.base.length - 1] === '/') {
+			// 			file.base = file.base.substring(0, file.base.length - 1);
+			// 		}
 
-					const push = file => {
-						this.push(file);
-						cb();
-					};
+			// 		const push = file => {
+			// 			this.push(file);
+			// 			cb();
+			// 		};
 
-					if (compress._isCompressibleFile(file)) {
-						return compressionTransform(file).then(push, cb);
-					}
+			// 		if (compress._isCompressibleFile(file)) {
+			// 			return compressionTransform(file).then(push, cb);
+			// 		}
 
-					otherTransform(file).then(push, cb);
-				}, cb);
-			}).resume();
+			// 		otherTransform(file).then(push, cb);
+			// 	}, cb);
+			// }).resume();
 
-			function getCompressionTransform() {
-				const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
-				s3Options.headers['content-encoding'] = 'gzip';
+			// function getCompressionTransform() {
+			// 	const s3Options = JSON.parse(JSON.stringify(s3BaseOptions));
+			// 	s3Options.headers['content-encoding'] = 'gzip';
 
-				const upload = s3(options.getCreds(), s3Options);
+			// 	const upload = s3(options.getCreds(), s3Options);
 
-				return function compressionTransform(file) {
-					return compress(file).then(upload);
-				};
-			}
+			// 	return function compressionTransform(file) {
+			// 		return compress(file).then(upload);
+			// 	};
+			// }
 
-			function getOtherTransform() {
-				return s3(options.getCreds(), s3BaseOptions);
-			}
+			// function getOtherTransform() {
+			// 	return s3(options.getCreds(), s3BaseOptions);
+			// }
 		},
 		getLocation: function() {
 			const options = optionsValidator(opts);
 			return 'https://s.brightspace.com/' + options.getUploadPath() + '/';
+		},
+		createIssue: function() {
+			const options = optionsValidator(opts);
+			const appInventoryOptions = options.getAppInventory();
+			if (appInventoryOptions) {
+				console.log(`call github api to create issue with token ${appInventoryOptions.token}, version ${appInventoryOptions.version}, and build ${appInventoryOptions.build}`); //eslint-disable-line no-console
+			}
 		}
 	};
 }
